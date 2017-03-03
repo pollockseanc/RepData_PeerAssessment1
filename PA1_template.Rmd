@@ -20,7 +20,7 @@ activitydata <- read.csv("activity.csv", colClasses = c("numeric", "Date", "nume
 ###Histogram of the sum of the steps based on date
 ```{r steps by date histogram}
 sumsteps <- aggregate(steps~date, activitydata, sum, na.action = na.omit)
-hist(sumsteps$steps)
+hist(sumsteps$steps, main = "Total Steps per Day", xlab = "Steps")
 ```
 
 ###Mean steps per date
@@ -43,7 +43,8 @@ meanstepsinterval <- aggregate(steps~interval, activitydata, mean)
 ###Average steps by interval across all days
 ```{r mean steps by interval}
 ggplot(meanstepsinterval, aes(interval, steps))  + 
-        geom_line()
+        geom_line() +
+        ggtitle("Time Series of Mean Steps by Interval")
 ```
 
 ###Interval that saw the most average steps
@@ -76,7 +77,8 @@ if (is.na(repdata$steps[i]) == T){
 ###Total number of steps by day with imputed data
 ```{r steps by date on replaced data}
 
-hist(aggregate(steps~date, repdata, sum)$steps)
+hist(aggregate(steps~date, repdata, sum)$steps, main="Total Steps by Day", xlab = "Steps")
+
 ```
 ## Are there differences in activity patterns between weekdays and weekends?
 ###Create a new variable that determines if a day is a weekday or not
