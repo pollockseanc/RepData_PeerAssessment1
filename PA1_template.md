@@ -16,7 +16,7 @@ activitydata <- read.csv("activity.csv", colClasses = c("numeric", "Date", "nume
 
 ```r
 sumsteps <- aggregate(steps~date, activitydata, sum, na.action = na.omit)
-hist(sumsteps$steps)
+hist(sumsteps$steps, main = "Total Steps per Day", xlab = "Steps")
 ```
 
 ![](PA1_template_files/figure-html/steps by date histogram-1.png)<!-- -->
@@ -158,7 +158,8 @@ meanstepsinterval <- aggregate(steps~interval, activitydata, mean)
 
 ```r
 ggplot(meanstepsinterval, aes(interval, steps))  + 
-        geom_line()
+        geom_line() +
+        ggtitle("Time Series of Mean Steps by Interval")
 ```
 
 ![](PA1_template_files/figure-html/mean steps by interval-1.png)<!-- -->
@@ -201,7 +202,7 @@ if (is.na(repdata$steps[i]) == T){
 ###Total number of steps by day with imputed data
 
 ```r
-hist(aggregate(steps~date, repdata, sum)$steps)
+hist(aggregate(steps~date, repdata, sum)$steps, main="Total Steps by Day", xlab = "Steps")
 ```
 
 ![](PA1_template_files/figure-html/steps by date on replaced data-1.png)<!-- -->
