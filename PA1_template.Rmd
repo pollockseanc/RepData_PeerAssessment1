@@ -8,18 +8,91 @@ output:
 
 ## Loading and preprocessing the data
 
+```{r}
+library(ggplot2)
+unzip("activity.zip")
+activitydata <- read.csv("activity.csv", colClasses = c("numeric", "Date", "numeric"))
 
+```
 
 ## What is mean total number of steps taken per day?
 
+###Histogram of the sum of the steps based on date
+```{r steps by date histogram}
+sumsteps <- aggregate(steps~date, activitydata, sum, na.action = na.omit)
+hist(sumsteps$steps)
+```
 
+###Mean steps per date
+```{r}
+meansteps <- aggregate(steps~date, activitydata, mean)
+print(meansteps)
+```
+###Median steps per date
+```{r, echo=TRUE}
+mediansteps <- aggregate(steps ~ date, activitydata, mean)
+mediansteps
+```
 
 ## What is the average daily activity pattern?
+```{r}
 
+meanstepsinterval <- aggregate(steps~interval, activitydata, mean)
+```
 
+###Average steps by interval across all days
+```{r mean steps by interval}
+ggplot(meanstepsinterval, aes(interval, steps))  + 
+        geom_line()
+```
+
+###Interval that saw the most average steps
+```{r}
+
+meanstepsinterval$interval[meanstepsinterval$steps == max(meanstepsinterval$steps)]
+```
 
 ## Imputing missing values
 
+###Number of rows with NA values
+```{r}
 
+sum(is.na(activitydata$steps))
 
+```
+
+###Replace NA step values with their mean at the interval
+```{r}
+repdata <- activitydata
+for (i in 1:nrow(repdata)){
+if (is.na(repdata$steps[i]) == T){
+        #avgst <- meanstep
+        repdata$steps[i] <- meanstepsinterval$steps[repdata$interval[i] == meanstepsinterval$interval]
+
+        }
+}
+```
+
+###Total number of steps by day with imputed data
+```{r steps by date on replaced data}
+
+hist(aggregate(steps~date, repdata, sum)$steps)
+```
 ## Are there differences in activity patterns between weekdays and weekends?
+###Create a new variable that determines if a day is a weekday or not
+```{r}
+for(i in 1:nrow(repdata)) {
+if(weekdays(repdata$date[i])=="Saturday" | weekdays(repdata$date[i])=="Sunday"){
+        repdata$daytype[i] <- "Weekend"
+} else {
+        repdata$daytype[i] <- "weekday"
+}
+}
+  
+```
+###Average steps by interval by weekday or weekend
+```{r average steps by interval by daytype}
+aggrepdata <- aggregate(steps~interval+daytype, repdata, mean)
+ggplot(aggrepdata, aes( interval, steps)) +
+        geom_line() + facet_grid(daytype ~ . )
+```
